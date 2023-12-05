@@ -14,13 +14,17 @@
         </li>
       </ul>
       <div class="action-btn">
-        @if (@Auth::user()->nim)
+        @if (@$mahasiswa->nim)
         <div class="dropdown">
           <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <p class="mb-0">Halo, {{ Auth::user()->nama_depan }}</p>
+            <p class="mb-0">Halo, {{ $mahasiswa->nama_depan }}</p>
           </button>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Logout</a></li>
+            <form action="/logout/post" method="post">
+              @csrf
+              <input type="hidden" name="nim" value="{{ $mahasiswa->nim }}">
+              <li><button type="submit" class="dropdown-item" href="#">Logout</button></li>
+            </form>
           </ul>
         </div>
         @else

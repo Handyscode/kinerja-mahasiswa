@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,5 +20,16 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+        
+
+        DB::table('tbl_mahasiswa')->insert([
+            'nim' => '00000000',
+            'nama_depan' => 'admin',
+            'nama_belakang' => 'admin',
+            'tgl_lahir' => '2023-12-05',
+            'email' => 'admin12@gmail.com',
+            'universitas' => 'UNIVADMIN',
+            'nohp' => '081234567890',
+        ]);
     }
 }

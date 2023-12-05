@@ -67,7 +67,7 @@ return [
 
         'users' => [
             'driver' => 'database',
-            'table' => 'tbl_mahasiswa',
+            'table' => 'tbl_akses',
         ],
     ],
 

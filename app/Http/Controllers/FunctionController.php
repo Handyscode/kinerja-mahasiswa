@@ -31,6 +31,11 @@ class FunctionController extends Controller
                 'email' => $validated['email'],
                 'universitas' => $validated['universitas'],
                 'nohp' => $validated['nohp'],
+            ]);
+
+            DB::table('tbl_akses')->insert([
+                'nim' => $validated['nim'],
+                'level' => 'mahasiswa',
                 'password' => Hash::make($validated['password']),
             ]);
             return redirect('/login')->with('success', 'Registrasi Berhasil, Silahkan Login');
@@ -41,7 +46,7 @@ class FunctionController extends Controller
 
     public function storeLogin(Request $request){
         $validated = $request->validate([
-            'email' => 'required|email',
+            'nim' => 'required',
             'password' => 'required',
         ]);
 
@@ -52,6 +57,15 @@ class FunctionController extends Controller
         }
 
         return back()->with('error', 'Credentials not matched');
+    }
+
+    public function logout(Request $request){
+        Auth::logout();
+        $request->session()->invalidate();
+ 
+        $request->session()->regenerateToken();
+    
+        return redirect('/');
     }
 
     public function hitungNilai(Request $request){
@@ -78,26 +92,26 @@ class FunctionController extends Controller
             $kdnilai = 'P' . str_pad($lastIncrement + 1, 3, 0, STR_PAD_LEFT);
         }
 
-        // try {
-        //     DB::table('tbl_penilaian')->insert([
-        //         'kd_penilaian' => $kdnilai,
-        //         'nim' => Auth::user()->nim,
-        //         'tanggalnilai' => $date,
-        //         'nilai_kehadiran' => $request->get('kehadiran'),
-        //         'nilai_tugas' => $request->get('tugas'),
-        //         'nilai_quiz' => $request->get('quiz'),
-        //         'nilai_uts' => $request->get('uts'),
-        //         'nilai_uas' => $request->get('uas')
-        //     ]);
-        // } catch (\Exception $e) {
-        //     return back()->with('error', $e->getMessage());
-        // }
+        try {
+            DB::table('tbl_penilaian')->insert([
+                'kd_penilaian' => $kdnilai,
+                'nim' => Auth::user()->nim,
+                'tanggalnilai' => $date,
+                'nilai_kehadiran' => $request->get('kehadiran'),
+                'nilai_tugas' => $avgTugas,
+                'nilai_quiz' => $avgQuiz,
+                'nilai_uts' => $request->get('uts'),
+                'nilai_uas' => $request->get('uas')
+            ]);
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
 
         $lastKelompokId = DB::table('tbl_kelompok')->select('kd_kelompok')->orderBy('kd_kelompok', 'desc')->first();
         if ($lastKelompokId == null) {
             $kdkelompok = "K001";
         } else {
-            $lastIncrement = substr($lastKelompokId->id_bayar, -3);
+            $lastIncrement = substr($lastKelompokId->kd_kelompok, -3);
             $kdkelompok = 'K' . str_pad($lastIncrement + 1, 3, 0, STR_PAD_LEFT);
         }
 
@@ -126,6 +140,33 @@ class FunctionController extends Controller
         $nf_cukup = $this->getNfCukup($request->get('uas'));
         $nf_baik = $this->getNfBaik($request->get('uas'));
 
+        try {
+            // Insert Data Kelompok
+            DB::table('tbl_kelompok')->insert([
+                'kd_kelompok' => $kdkelompok,
+                'kd_penilaian' => $kdnilai,
+                'nim' => Auth::user()->nim,
+                'nk_kurang' => number_format($nk_kurang, 2),
+                'nk_cukup' => number_format($nk_cukup, 2),
+                'nk_baik' => number_format($nk_baik, 2),
+                'nt_kurang' => number_format($nt_kurang, 2),
+                'nt_cukup' => number_format($nt_cukup, 2),
+                'nt_baik' => number_format($nt_baik, 2),
+                'nq_kurang' => number_format($nq_kurang, 2),
+                'nq_cukup' => number_format($nq_cukup, 2),
+                'nq_baik' => number_format($nq_baik, 2),
+                'nm_kurang' => number_format($nm_kurang, 2),
+                'nm_cukup' => number_format($nm_cukup, 2),
+                'nm_baik' => number_format($nm_baik, 2),
+                'nf_kurang' => number_format($nf_kurang, 2),
+                'nf_cukup' => number_format($nf_cukup, 2),
+                'nf_baik' => number_format($nf_baik, 2)
+            ]);
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+
+        return redirect('/hasil-penilaian'.'/'.$kdkelompok);
 
         dd([
             'kehadrian' => $request->get('kehadiran'),
@@ -147,6 +188,45 @@ class FunctionController extends Controller
             'nf_cukup' => $nf_cukup,
             'nf_baik' => $nf_baik,
         ]);
+    }
+
+    public function getPenilaian(Request $request){
+        $kehadiran = 'nk_'.$request->get('kehadiran');
+        $tugas = 'nt_'.$request->get('tugas');
+        $quiz = 'nq_'.$request->get('quiz');
+        $uts = 'nm_'.$request->get('uts');
+        $uas = 'nf_'.$request->get('uas');
+
+        $getPenilaian = DB::table('tbl_kelompok')->select($kehadiran, $tugas, $quiz, $uts, $uas)->get();
+        $value = '';
+
+        for ($i=0; $i < count($getPenilaian); $i++) {
+            $nilai = 1;
+            if ($nilai > $getPenilaian[$i]->nk_baik) {
+                $nilai = $getPenilaian[$i]->nk_baik;
+            }
+            if ($nilai > $getPenilaian[$i]->nt_baik) {
+                $nilai = $getPenilaian[$i]->nt_baik;
+            }
+            if ($nilai > $getPenilaian[$i]->nq_baik) {
+                $nilai = $getPenilaian[$i]->nq_baik;
+            }
+            if ($nilai > $getPenilaian[$i]->nm_baik) {
+                $nilai = $getPenilaian[$i]->nm_baik;
+            }
+            if ($nilai > $getPenilaian[$i]->nf_baik) {
+                $nilai = $getPenilaian[$i]->nf_baik;
+            }
+            $value = $value .','. $nilai;
+
+
+            // if ($value = '') {
+            //     $value = $nilai;
+            // }else{
+            //     $value = $value .','. $nilai;
+            // }
+        }
+        return response()->json($value);
     }
 
     // Function Nilai Kehadiran Kurang

@@ -23,7 +23,7 @@
           <form action="/login/post" method="post" id="loginForm" class="mt-5">
             @csrf
             <div class="mb-3">
-              <input type="email" name="email" id="email" class="form-control fs-6 form-control-lg" placeholder="Email">
+              <input type="text" name="nim" id="nim" class="form-control fs-6 form-control-lg" placeholder="NIM">
             </div>
             <div class="mb-3">
               <input type="password" name="password" id="password" class="form-control fs-6 form-control-lg" placeholder="Password">

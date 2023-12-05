@@ -9,6 +9,11 @@
             <h2 class="card-title text-uppercase" style="font-weight: 800;">Hitung Penilaian Mahasiswa</h2>
             <h5 class="card-subtitle mb-2 text-body-secondary">Hitung penilaian kuliahmu</h5>
           </div>
+          @if ($message = Session::get('error'))
+            <div class="alert alert-danger" role="alert">
+              <strong>{{ $message }}</strong>
+            </div>
+          @endif
           <form action="/prediksi-nilai/store" method="post" id="loginForm" class="mt-5">
             @csrf
             <div class="mb-3">
