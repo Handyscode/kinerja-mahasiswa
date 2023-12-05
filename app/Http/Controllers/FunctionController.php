@@ -167,66 +167,42 @@ class FunctionController extends Controller
         }
 
         return redirect('/hasil-penilaian'.'/'.$kdkelompok);
-
-        dd([
-            'kehadrian' => $request->get('kehadiran'),
-            'nk_kurang' => $nk_kurang,
-            'nk_cukup' => $nk_cukup,
-            'nk_baik' => $nk_baik,
-            'avgTugas' => $avgTugas,
-            'nt_kurang' => $nt_kurang,
-            'nt_cukup' => $nt_cukup,
-            'nt_baik' => $nt_baik,
-            'avgQuiz' => $avgQuiz,
-            'nq_kurang' => $nq_kurang,
-            'nq_cukup' => $nq_cukup,
-            'nq_baik' => $nq_baik,
-            'nm_kurang' => $nm_kurang,
-            'nm_cukup' => $nm_cukup,
-            'nm_baik' => $nm_baik,
-            'nf_kurang' => $nf_kurang,
-            'nf_cukup' => $nf_cukup,
-            'nf_baik' => $nf_baik,
-        ]);
     }
 
     public function getPenilaian(Request $request){
         $kehadiran = 'nk_'.$request->get('kehadiran');
         $tugas = 'nt_'.$request->get('tugas');
-        $quiz = 'nq_'.$request->get('quiz');
-        $uts = 'nm_'.$request->get('uts');
-        $uas = 'nf_'.$request->get('uas');
 
-        $getPenilaian = DB::table('tbl_kelompok')->select($kehadiran, $tugas, $quiz, $uts, $uas)->get();
-        $value = '';
+        $getMahasiswa = DB::table('tbl_mahasiswa')->join('tbl_kelompok', 'tbl_mahasiswa.nim', '=', 'tbl_kelompok.nim')->select('tbl_mahasiswa.nim', 'tbl_mahasiswa.nama_depan', 'tbl_mahasiswa.nama_belakang', 'tbl_kelompok.'.$kehadiran, 'tbl_kelompok.'.$tugas)->get();
 
-        for ($i=0; $i < count($getPenilaian); $i++) {
-            $nilai = 1;
-            if ($nilai > $getPenilaian[$i]->nk_baik) {
-                $nilai = $getPenilaian[$i]->nk_baik;
+        // while ($getPenilaian) {
+        //     $c1 = $getPenilaian;
+        //     $c1 = $ux[$row['nk_baik']];
+        //     $c2 = $ux[$row['nt_baik']];
+        //     return response()->json($row);
+        // }
+        $nilai = [];
+        for ($i=0; $i < count($getMahasiswa); $i++) { 
+            $c1 = $getMahasiswa[$i]->$kehadiran;
+            $c2 = $getMahasiswa[$i]->$tugas;
+            
+            if ($request->get('operator') == 'AND') {
+                $formattedNumber = number_format(min($c1, $c2), 2);
+            }elseif($request->get('operator') == 'OR'){
+                $formattedNumber = number_format(max($c1, $c2), 2);
             }
-            if ($nilai > $getPenilaian[$i]->nt_baik) {
-                $nilai = $getPenilaian[$i]->nt_baik;
-            }
-            if ($nilai > $getPenilaian[$i]->nq_baik) {
-                $nilai = $getPenilaian[$i]->nq_baik;
-            }
-            if ($nilai > $getPenilaian[$i]->nm_baik) {
-                $nilai = $getPenilaian[$i]->nm_baik;
-            }
-            if ($nilai > $getPenilaian[$i]->nf_baik) {
-                $nilai = $getPenilaian[$i]->nf_baik;
-            }
-            $value = $value .','. $nilai;
-
-
-            // if ($value = '') {
-            //     $value = $nilai;
-            // }else{
-            //     $value = $value .','. $nilai;
-            // }
+            
+            array_push($nilai, [$getMahasiswa[$i]->nim, $getMahasiswa[$i]->nama_depan, $getMahasiswa[$i]->nama_belakang, $formattedNumber]);
+            // $c2 = $ux[$getPenilaian[$i]->nt_baik];
         }
-        return response()->json($value);
+
+        $final = [];
+        for ($j=0; $j < count($nilai); $j++) { 
+            if ($nilai[$j][3] != 0) {
+                array_push($final, [$nilai[$j][0], $nilai[$j][1], $nilai[$j][2], $nilai[$j][3]]);
+            }
+        }
+        return response()->json($final);
     }
 
     // Function Nilai Kehadiran Kurang

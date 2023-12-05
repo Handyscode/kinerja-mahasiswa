@@ -4,7 +4,7 @@
 @section('content')
   <section class="hasil-section">
     <div class="container-fluid d-flex justify-content-between flex-wrap p-4 gap-4">
-      <div class="table-parent bg-white p-4 rounded border w-100 overflow-auto">
+      <div class="table-parent bg-white p-4 rounded border overflow-auto">
         <div class="title">
           <h1>List Penilaian</h1>
         </div>
@@ -97,7 +97,7 @@
               </select>
             </div>
             <div class="search-field mb-3">
-              <select name="operator1" id="operator1" class="form-control">
+              <select name="operator" id="operator" class="form-control">
                 <option value="AND">Dan</option>
                 <option value="OR">Atau</option>
               </select>
@@ -110,51 +110,22 @@
                 <option value="kurang">Kurang</option>
               </select>
             </div>
-            <div class="search-field mb-3">
-              <select name="operator2" id="operator2" class="form-control">
-                <option value="AND">Dan</option>
-                <option value="OR">Atau</option>
-              </select>
-            </div>
-            <div class="search-field mb-3">
-              <label for="quiz">Quiz</label>
-              <select name="quiz" id="quiz" class="form-control">
-                <option value="baik">Baik</option>
-                <option value="cukup">Cukup</option>
-                <option value="kurang">Kurang</option>
-              </select>
-            </div>
-            <div class="search-field mb-3">
-              <select name="operator2" id="operator2" class="form-control">
-                <option value="AND">Dan</option>
-                <option value="OR">Atau</option>
-              </select>
-            </div>
-            <div class="search-field mb-3">
-              <label for="uts">UTS</label>
-              <select name="uts" id="uts" class="form-control">
-                <option value="baik">Baik</option>
-                <option value="cukup">Cukup</option>
-                <option value="kurang">Kurang</option>
-              </select>
-            </div>
-            <div class="search-field mb-3">
-              <select name="operator3" id="operator3" class="form-control">
-                <option value="AND">Dan</option>
-                <option value="OR">Atau</option>
-              </select>
-            </div>
-            <div class="search-field mb-3">
-              <label for="uas">UAS</label>
-              <select name="uas" id="uas" class="form-control">
-                <option value="baik">Baik</option>
-                <option value="cukup">Cukup</option>
-                <option value="kurang">Kurang</option>
-              </select>
-            </div>
           </div>
           <button type="submit" class="btn btn-primary btn-lg w-100">Filter</button>
         </form>
+        <div class="filter-content mt-5 d-none">
+          <table class="table text-center table-responsive table-bordered table-striped align-middle table-filter">
+            <thead class="table-filter-head">
+              <tr>
+                <th>NIM</th>
+                <th>Nama Lengkap</th>
+                <th>Nilai</th>
+              </tr>
+            </thead>
+            <tbody class="filter-table-content">
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </section>
