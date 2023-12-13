@@ -9,6 +9,7 @@ $('#filterForm').submit(function (e) {
     url: url,
     data: data,
     success: function(res){
+      // console.log(res);
       const tableFilter = document.querySelector('.table-filter')
       const filterContent = document.querySelector('.filter-content')
 

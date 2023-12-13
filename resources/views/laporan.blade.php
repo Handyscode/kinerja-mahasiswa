@@ -97,12 +97,6 @@
               </select>
             </div>
             <div class="search-field mb-3">
-              <select name="operator" id="operator" class="form-control">
-                <option value="AND">Dan</option>
-                <option value="OR">Atau</option>
-              </select>
-            </div>
-            <div class="search-field mb-3">
               <label for="tugas">Tugas</label>
               <select name="tugas" id="tugas" class="form-control">
                 <option value="baik">Baik</option>
@@ -110,6 +104,37 @@
                 <option value="kurang">Kurang</option>
               </select>
             </div>
+            <div class="search-field mb-3">
+              <label for="quiz">Quiz</label>
+              <select name="quiz" id="quiz" class="form-control">
+                <option value="baik">Baik</option>
+                <option value="cukup">Cukup</option>
+                <option value="kurang">Kurang</option>
+              </select>
+            </div>
+            <div class="search-field mb-3">
+              <label for="uts">UTS</label>
+              <select name="uts" id="uts" class="form-control">
+                <option value="baik">Baik</option>
+                <option value="cukup">Cukup</option>
+                <option value="kurang">Kurang</option>
+              </select>
+            </div>
+            <div class="search-field mb-3">
+              <label for="uas">UAS</label>
+              <select name="uas" id="uas" class="form-control">
+                <option value="baik">Baik</option>
+                <option value="cukup">Cukup</option>
+                <option value="kurang">Kurang</option>
+              </select>
+            </div>
+          </div>
+          <div class="search-field mb-3">
+            <label for="operator">Operator</label>
+            <select name="operator" id="operator" class="form-control">
+              <option value="AND">Dan</option>
+              <option value="OR">Atau</option>
+            </select>
           </div>
           <button type="submit" class="btn btn-primary btn-lg w-100">Filter</button>
         </form>

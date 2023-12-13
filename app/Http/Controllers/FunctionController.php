@@ -172,24 +172,22 @@ class FunctionController extends Controller
     public function getPenilaian(Request $request){
         $kehadiran = 'nk_'.$request->get('kehadiran');
         $tugas = 'nt_'.$request->get('tugas');
+        $quiz = 'nq_'.$request->get('quiz');
+        $uts = 'nm_'.$request->get('uts');
+        $uas = 'nf_'.$request->get('uas');
 
-        $getMahasiswa = DB::table('tbl_mahasiswa')->join('tbl_kelompok', 'tbl_mahasiswa.nim', '=', 'tbl_kelompok.nim')->select('tbl_mahasiswa.nim', 'tbl_mahasiswa.nama_depan', 'tbl_mahasiswa.nama_belakang', 'tbl_kelompok.'.$kehadiran, 'tbl_kelompok.'.$tugas)->get();
+        $getMahasiswa = DB::table('tbl_mahasiswa')->join('tbl_kelompok', 'tbl_mahasiswa.nim', '=', 'tbl_kelompok.nim')->select('tbl_mahasiswa.nim', 'tbl_mahasiswa.nama_depan', 'tbl_mahasiswa.nama_belakang', 'tbl_kelompok.'.$kehadiran, 'tbl_kelompok.'.$tugas, 'tbl_kelompok.'.$quiz, 'tbl_kelompok.'.$uts, 'tbl_kelompok.'.$uas)->get();
 
-        // while ($getPenilaian) {
-        //     $c1 = $getPenilaian;
-        //     $c1 = $ux[$row['nk_baik']];
-        //     $c2 = $ux[$row['nt_baik']];
-        //     return response()->json($row);
-        // }
         $nilai = [];
         for ($i=0; $i < count($getMahasiswa); $i++) { 
             $c1 = $getMahasiswa[$i]->$kehadiran;
             $c2 = $getMahasiswa[$i]->$tugas;
+            $c3 = $getMahasiswa[$i]->$quiz;
             
             if ($request->get('operator') == 'AND') {
-                $formattedNumber = number_format(min($c1, $c2), 2);
+                $formattedNumber = number_format(min($c1, $c2, $c3), 2);
             }elseif($request->get('operator') == 'OR'){
-                $formattedNumber = number_format(max($c1, $c2), 2);
+                $formattedNumber = number_format(max($c1, $c2, $c3), 2);
             }
             
             array_push($nilai, [$getMahasiswa[$i]->nim, $getMahasiswa[$i]->nama_depan, $getMahasiswa[$i]->nama_belakang, $formattedNumber]);
